@@ -22,10 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+# SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY="django-insecure-&v@s@n6j8d-t62)h(qfmijokcs!h^_fhu=!^oke^7xdv&5k%pr"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+# DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -201,12 +203,17 @@ CORS_ALLOW_METHODS = [
 CORS_ORIGIN_ALLOW_ALL = True
 # -----  Cors origin settings ------
 
-EMAIL_HOST = config('EMAIL_HOST', default='localhost')
-EMAIL_PORT = config('EMAIL_PORT', default=25, cast=int)
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
-
+# EMAIL_HOST = config('EMAIL_HOST', default='localhost')
+# EMAIL_PORT = config('EMAIL_PORT', default=25, cast=int)
+# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+# EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+# EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER="xatamjonovulugbek17@gmail.com"
+EMAIL_HOST_PASSWORD="bnekgyydhfqhedgf" 
 
 
 
