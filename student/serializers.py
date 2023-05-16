@@ -15,13 +15,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
   class Meta:
     model = Student
     fields = (
-            "username",
             "password",
             "password2",
             "first_name",
             "last_name",
-            "age",
-            "gender",
             "email",
             "phone",
         )
@@ -42,11 +39,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
-  # login uchun 'username' maydonini yaratib olish kerak
-  username = serializers.CharField(max_length=255)
+  # login uchun 'email' maydonini yaratib olish kerak
+  email = serializers.EmailField()
   class Meta:
     model = Student
-    fields = ['username', 'password']
+    fields = ['email', 'password']
 
 
 class LogoutSerializer(serializers.Serializer):
@@ -74,12 +71,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
     model = Student
     fields = (
             "id",
-            "username",
             "slug",
             "first_name",
             "last_name",
-            "age",
-            "gender",
             "email",
             "phone",
             'ball',

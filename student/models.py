@@ -23,18 +23,15 @@ _validate_phone = RegexValidator(
 )
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, first_name, last_name,  email, age, gender, phone,
+    def create_user(self, first_name, last_name,  email, phone,
                     password=None, password2=None, ball=0, coin=0,):
 
-        if not username:
-            raise ValueError("Foydalanuvchida 'username' bo'lishi shart !")
+        if not email:
+            raise ValueError("Foydalanuvchida 'email' bo'lishi shart !")
         user = self.model(
-            username=username,
             first_name=first_name,
             last_name=last_name,
             email=email,
-            age=age,
-            gender=gender,
             phone=phone,
             ball = ball,
             coin =coin
@@ -44,16 +41,13 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password=None):
+    def create_superuser(self, email, password=None):
 
         user = self.create_user(
             password=password,
-            username=username,
             email=email,
             first_name='Admin',
             last_name='Admin',
-            age=1,
-            gender='man',
             ball = 0,
             coin = 0,
             phone='998991234567'
@@ -64,12 +58,9 @@ class UserManager(BaseUserManager):
 
 class Student(AbstractUser):
     """ O'quvchi modeli """
-    username = models.CharField(max_length=51, unique=True, verbose_name="username")
-    slug = AutoSlugField(populate_from='username', unique=True)
-    age = models.PositiveIntegerField(verbose_name="Yoshi")
     email = models.EmailField(unique=True, verbose_name="Email")
+    slug = AutoSlugField(populate_from='email', unique=True)
     phone = models.CharField(max_length=12, verbose_name='Tel. raqam')
-    gender = models.CharField(max_length=10, choices=GENDER, default='man', verbose_name="Jinsi")
     ball = models.PositiveIntegerField(default=0, verbose_name="O'quvchining bali")
     coin = models.PositiveIntegerField(default=0, verbose_name="O'quvchining tangasi")
 
@@ -79,9 +70,15 @@ class Student(AbstractUser):
 
     objects = UserManager()
 
-
     status = models.BooleanField(default=True, verbose_name="Holati")
     created_at = models.DateTimeField(auto_now=True)
+
+    # username - kerak emas bu loyihada
+    username = None
+    
+    EMAIL_FIELD = 'email'
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     class Meta:
         verbose_name = "O'quvchi"
@@ -89,7 +86,7 @@ class Student(AbstractUser):
         ordering = ('-created_at',)
 
     def __str__(self) -> str:
-        return self.username
+        return self.email
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"

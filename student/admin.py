@@ -5,7 +5,7 @@ from .models import Student
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ['username', 'first_name', 'id', 'age', 'email', 'gender', 'status']
-    list_filter = ('age', 'gender', 'status', 'created_at')
-    list_editable = ['status']
+    list_display = ['email', 'first_name', 'id', 'status']
+    list_filter = ('status', 'created_at')
+    list_editable = ['status',]
 

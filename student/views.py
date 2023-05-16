@@ -45,9 +45,9 @@ class UserLoginView(APIView):
     def post(self, request, format=None):
         serializer = UserLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = serializer.data.get('username')
+        email = serializer.data.get('email')
         password = serializer.data.get('password')
-        user = authenticate(username=username, password=password)
+        user = authenticate(email=email, password=password)
 
         if user is not None:
             token = get_tokens_for_user(user)
@@ -62,7 +62,7 @@ class UserLoginView(APIView):
         else:
             return Response({
                 'errors': {
-                    'non_field_errors': ["Kiritilgan 'parol' yoki 'username' noto'g'ri"]
+                    'non_field_errors': ["Kiritilgan 'parol' yoki 'email' noto'g'ri"]
                 }
             }, status=status.HTTP_404_NOT_FOUND)
 
@@ -103,21 +103,18 @@ class UserProfileUpdateView(RetrieveUpdateDestroyAPIView):
         data = request.data
 
         try:
-            if Student.objects.filter(username=data['username']) and student_data.username != data['username']:
-                return Response({'error': "Bunday 'username' avval yaratilgan ! Iltimos boshqa 'username' tanlang."}, status=status.HTTP_204_NO_CONTENT)
+            if Student.objects.filter(email=data['email']) and student_data.email != data['email']:
+                return Response({'error': "Bunday 'email' avval yaratilgan ! Iltimos boshqa 'email' tanlang."}, status=status.HTTP_204_NO_CONTENT)
         except: 
             pass
 
         try:
             student_data.password = data['password'] if 'password' in data else student_data.password
-            student_data.username = data['username'] if 'username' in data else student_data.username
+            student_data.email = data['email'] if 'email' in data else student_data.email
             student_data.first_name = data['first_name'] if 'first_name' in data else student_data.first_name
             student_data.last_name = data['last_name'] if 'last_name' in data else student_data.last_name
-            student_data.age = data['age'] if 'age' in data else student_data.age
-            student_data.gender = data['gender'] if 'gender' in data else student_data.gender
             student_data.ball = data['ball'] if 'ball' in data else student_data.ball
             student_data.coin = data['coin'] if 'coin' in data else student_data.coin
-            student_data.email = data['email'] if 'email' in data else student_data.email
             student_data.phone = data['phone'] if 'phone' in data else student_data.phone
 
             student_data.save()
