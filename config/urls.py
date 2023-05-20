@@ -45,14 +45,16 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
 
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
 
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-radoc'),
     
-    path('student/', include('student.urls'))
-
+    path('admin-api/student/', include('student.urls')),
+    # path('admin-api/course/', include('course.urls')), # vaqrincha yopiq
+    path('admin-api/examp/', include('exam.urls')),
+    path('api/', include('api.urls')),
 ]
 
 if settings.DEBUG:

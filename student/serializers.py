@@ -5,9 +5,11 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
-from .models import Student
+from .models import Student, MyCourse, Contact
 from .utils import Util
+from exam.serializers import ResultSerializer
 
+""" Serialization for User Authentication """
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
   # Ro'yhatdan o'tish vaqtida parolni tekshirish uchun password2 maydoni yaratib olindi
@@ -37,14 +39,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
   def create(self, validate_data):
     return Student.objects.create_user(**validate_data)
 
-
 class UserLoginSerializer(serializers.ModelSerializer):
   # login uchun 'email' maydonini yaratib olish kerak
   email = serializers.EmailField()
   class Meta:
     model = Student
     fields = ['email', 'password']
-
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
@@ -65,8 +65,8 @@ class LogoutSerializer(serializers.Serializer):
         except TokenError:
             self.fail('bad_token')
 
-
 class UserProfileSerializer(serializers.ModelSerializer): 
+  results = ResultSerializer(many=True, read_only=True)
   class Meta:
     model = Student
     fields = (
@@ -78,26 +78,33 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "phone",
             'ball',
             'coin',
+            'results',
          
         )
 
-
 class UserChangePasswordSerializer(serializers.Serializer):
+  current_password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
   password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
   password2 = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
+
   class Meta:
-    fields = ['password', 'password2']
+    fields = ['current_password', 'password', 'password2']
+
+  def validate_current_password(self, value):
+    user = self.context.get('user')
+    if not user.check_password(value):
+      raise serializers.ValidationError("Joriy parol noto'g'ri kiritildi !")
+    return value
 
   def validate(self, attrs):
     password = attrs.get('password')
     password2 = attrs.get('password2')
-    user = self.context.get('user')
     if password != password2:
-      raise serializers.ValidationError("Password and Confirm Password doesn't match")
+      raise serializers.ValidationError("parol muvaffaqiyatli o'zgartirildi !")
+    user = self.context.get('user')
     user.set_password(password)
     user.save()
     return attrs
-
 
 class SendPasswordResetEmailSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
@@ -131,7 +138,6 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
         else:
             raise serializers.ValidationError("Siz ro'yhatdan o'tmagansiz")
 
-
 class UserPasswordResetSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
     password2 = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
@@ -157,5 +163,19 @@ class UserPasswordResetSerializer(serializers.Serializer):
             PasswordResetTokenGenerator().check_token(user, token)
             raise serializers.ValidationError('Token is not Valid or Expired')
   
+
+""" Serialization for other objects in student models"""
+
+class MyCourseSerializer(serializers.ModelSerializer):
+  class Meta:
+     model = MyCourse
+     fields = ('__all__')
+
+class ContactSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = Contact
+      fields = ('__all__')
+
+     
 
 

@@ -5,6 +5,8 @@ from django.utils.html import mark_safe
 
 from autoslug import AutoSlugField
 
+from course.models import Course
+
 # Create your models here.
 
 GENDER = (
@@ -60,7 +62,7 @@ class Student(AbstractUser):
     """ O'quvchi modeli """
     email = models.EmailField(unique=True, verbose_name="Email")
     slug = AutoSlugField(populate_from='email', unique=True)
-    phone = models.CharField(max_length=12, verbose_name='Tel. raqam')
+    phone = models.CharField(max_length=20, verbose_name='Tel. raqam')
     ball = models.PositiveIntegerField(default=0, verbose_name="O'quvchining bali")
     coin = models.PositiveIntegerField(default=0, verbose_name="O'quvchining tangasi")
 
@@ -101,7 +103,38 @@ class Student(AbstractUser):
         "Is the user a member of staff?"
         return self.is_admin
 
+class MyCourse(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='my_courses')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    ball = models.PositiveIntegerField(default=0)
+    coin = models.PositiveIntegerField(default=0)
 
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now=True)
+    update_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = "Mening kursim"
+        verbose_name_plural = "Mening kurslarim"
+
+    def __str__(self):
+        return f"{self.course.name}"
+
+class Contact(models.Model):
+    name = models.CharField(max_length=50)
+    email = models.EmailField()
+    subject = models.CharField(max_length=250)
+    comment = models.TextField()
+
+    status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = ("Xabar")
+        verbose_name_plural = ("Xabarlar")
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return self.name
 
 

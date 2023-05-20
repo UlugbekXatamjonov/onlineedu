@@ -4,21 +4,22 @@ from django.forms.models import model_to_dict
 from pprint import pprint
 
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import viewsets
 
-
-from .models import Student
+from .renderers import UserRenderer
+from .models import Student, MyCourse, Contact
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, \
     UserChangePasswordSerializer, SendPasswordResetEmailSerializer, \
-    UserPasswordResetSerializer, LogoutSerializer
-from .renderers import UserRenderer
+    UserPasswordResetSerializer, LogoutSerializer, MyCourseSerializer, ContactSerializer
 
 
+""" Viewsets for User Authentication """
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -26,7 +27,6 @@ def get_tokens_for_user(user):
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
-
 
 class UserRegistrationView(APIView):
     renderer_classes = [UserRenderer]
@@ -37,7 +37,6 @@ class UserRegistrationView(APIView):
         user = serializer.save()
         token = get_tokens_for_user(user)
         return Response({'token': token, 'message': "Ro'yhatdan muvaffaqiyatli o'tdingiz"}, status=status.HTTP_201_CREATED)
-
 
 class UserLoginView(APIView):
     renderer_classes = [UserRenderer]
@@ -66,7 +65,6 @@ class UserLoginView(APIView):
                 }
             }, status=status.HTTP_404_NOT_FOUND)
 
-
 class LogoutAPIView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
 
@@ -80,7 +78,6 @@ class LogoutAPIView(generics.GenericAPIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
 class UserProfileView(RetrieveUpdateDestroyAPIView):
     renderer_classes = [UserRenderer]
     permission_classes = [IsAuthenticated]
@@ -88,7 +85,6 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
     def get(self, request, format=None):
         serializer = UserProfileSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class UserProfileUpdateView(RetrieveUpdateDestroyAPIView):
     queryset = Student.objects.all()
@@ -123,7 +119,6 @@ class UserProfileUpdateView(RetrieveUpdateDestroyAPIView):
         except Exception as e:
             return Response({'errors': "Ma'lumotlarni saqlashda xatolik sodir bo'ladi!!!"}, status=status.HTTP_204_NO_CONTENT)
 
-
 class UserChangePasswordView(APIView):
     renderer_classes = [UserRenderer]
     permission_classes = [IsAuthenticated]
@@ -134,7 +129,6 @@ class UserChangePasswordView(APIView):
         serializer.is_valid(raise_exception=True)
         return Response({'message': "Parol muvaffaqiyatli o'zgartirildi"}, status=status.HTTP_200_OK)
 
-
 class SendPasswordResetEmailView(APIView):
     renderer_classes = [UserRenderer]
 
@@ -142,7 +136,6 @@ class SendPasswordResetEmailView(APIView):
         serializer = SendPasswordResetEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'message': "Parolni tiklash uchun link yuborildi. Iltimos emailingizni tekshiring"}, status=status.HTTP_200_OK)
-
 
 class UserPasswordResetView(APIView):
     renderer_classes = [UserRenderer]
@@ -154,4 +147,19 @@ class UserPasswordResetView(APIView):
         return Response({'message': 'Parol muvaffaqiyatli yangilandi'}, status=status.HTTP_200_OK)
 
 
-"""  ------------------------------------------------  """
+"""  Viewsets for other models  """
+
+class MyCourseViewset(viewsets.ModelViewSet):
+    queryset = MyCourse.objects.all()
+    serializer_class = MyCourseSerializer
+    permission_classes = [AllowAny]
+
+class ContactViewset(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+    permission_classes = [AllowAny]
+
+
+
+
+
