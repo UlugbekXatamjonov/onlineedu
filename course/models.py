@@ -30,6 +30,7 @@ class Course(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='courses')
     lesson_count = models.PositiveIntegerField()
     cost = models.PositiveIntegerField(verbose_name='pul uchun',null=True)
+    photo = models.ImageField(upload_to='course_photo/%Y/%m/%d/', blank=True, null=True)
 
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now=True)
