@@ -1,9 +1,14 @@
 from rest_framework import serializers
-from exam.models import Category, SubCategory, Examp, Question, Answer, Result
-from course.models import Course, Teacher
+from exam.models import Category, SubCategory, Examp, Question, Answer, Result, FreeResult
+from course.models import Course, Teacher, Lessons, File, MyCourse
 
         
 """ --------------------------- EXAM APP --------------------------- """
+class FreeResultAPISerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = FreeResult
+        fields = ('__all__')
+
 class ResultAPISerializer(serializers.ModelSerializer):
     class Meta:
         model = Result
@@ -44,10 +49,21 @@ class CategoryAPISerializer(serializers.ModelSerializer):
 class TeacherAPISerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
-        fields = ('id', 'full_name', 'age', 'degree', 'about')
+        fields = ('id', 'full_name', 'age', 'degree', 'about', 'status')
 
 class CourseAPISerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Course
-        fields = ('id', 'name', 'teacher', 'lesson_count', 'cost')
+        fields = ('id', 'name', 'teacher', 'lesson_count', 'cost', 'status')
+
+class MyCourseAPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyCourse
+        fields = ('id', 'student', 'course', 'coin', 'ball')
+
+
+
+
+
+
+

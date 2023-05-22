@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .models import Student, Contact
 from .utils import Util
 from exam.serializers import ResultSerializer
+from api.serializers import MyCourseAPISerializer
 
 """ Serialization for User Authentication """
 
@@ -67,6 +68,7 @@ class LogoutSerializer(serializers.Serializer):
 
 class UserProfileSerializer(serializers.ModelSerializer): 
   results = ResultSerializer(many=True, read_only=True)
+  my_courses = MyCourseAPISerializer(many=True, read_only=True)
   class Meta:
     model = Student
     fields = (
@@ -79,6 +81,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'ball',
             'coin',
             'results',
+            'my_courses',
          
         )
 

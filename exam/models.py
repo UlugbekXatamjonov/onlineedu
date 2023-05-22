@@ -112,4 +112,19 @@ class Result(models.Model):
     def __str__(self):
         return self.student.first_name
 
+class FreeResult(models.Model):
+    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name="free_results", blank=True, null=True)
+    ball = models.PositiveIntegerField(default=0, blank=True, null=True)
+    # answers - o'quvchining belgilagan javovblari yuboriladigan maydon
+    answers = models.JSONField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Free Natija"
+        verbose_name_plural = "Free Natijalar"
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return self.subcategory.name
+
 

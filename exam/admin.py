@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, SubCategory, Examp, Question, Answer, Result
+from .models import Category, SubCategory, Examp, Question, Answer, Result, FreeResult
 
 # Register your models here.
 
@@ -42,4 +42,8 @@ class AnswerAdmin(admin.ModelAdmin):
 class ResultAdmin(admin.ModelAdmin):
     list_display = ('student', 'subcategory', 'examp', 'ball', 'coin', 'status', 'created_at')
     list_filter = ('subcategory', 'examp', 'status', 'created_at')
+
+@admin.register(FreeResult)
+class FreeResultAdmin(admin.ModelAdmin):
+    list_display = ('id', 'subcategory', 'ball', 'created_at')
 

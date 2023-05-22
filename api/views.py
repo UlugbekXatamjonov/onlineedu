@@ -6,11 +6,12 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from exam.models import Category, SubCategory, Examp, Question, Answer, Result
+from exam.models import Category, SubCategory, Examp, Question, Answer, Result, FreeResult
 from student.models import Student
-from course.models import Course, Teacher
+from course.models import Course, Teacher, Lessons, File, MyCourse
 from .serializers import CategoryAPISerializer, SubCategoryAPISerializer, ExampAPISerializer, \
-    QuestionAPISerializer, AnswerAPISerializer, ResultAPISerializer, CourseAPISerializer, TeacherAPISerializer
+    QuestionAPISerializer, AnswerAPISerializer, ResultAPISerializer, CourseAPISerializer, TeacherAPISerializer, \
+    MyCourseAPISerializer, FreeResultAPISerializer
 
 
 # Create your views here.
@@ -93,6 +94,41 @@ class ResultAPIViewset(ModelViewSet):
         except Exception as e:
             return Response({'error':"Ma'lumotlarni saqlashda xatolik yuzaga keldi !!!"})
 
+class FreeResultAPIViewset(ModelViewSet):
+    queryset =  FreeResult.objects.all()
+    serializer_class = FreeResultAPISerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        request_data = request.data
+
+        """ Obyekt ko'rinishidagi malumotlarni aniqlashtisrib olamiz """
+        try:
+            if 'subcategory' in request_data:
+                subcategory = SubCategory.objects.get(id=int(request_data['subcategory']))
+            else:
+                subcategory = None
+        except Exception as e:
+            return Response({'error':"Ma'lumotlar kiritilishida xatolik bo'lgan !!!"})
+        
+        result_ball = 0
+        keys = json.loads(request_data['answers'])
+        for key in keys:
+            answer = Answer.objects.get(id=key)
+            if answer.true_answer == True:
+                result_ball += 1
+
+        try:
+            new_result = FreeResult.objects.create(
+                subcategory = subcategory,
+                ball = result_ball,
+            )
+            new_result.save()
+            serializer = FreeResultAPISerializer(new_result)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({'error':"Ma'lumotlarni saqlashda xatolik yuzaga keldi !!!"})
+
 
 """ --------------------------- COURSE APP --------------------------- """
 class TeacherViewset(ModelViewSet):
@@ -105,3 +141,9 @@ class CourseViewset(ModelViewSet):
     serializer_class = CourseAPISerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+class MyCourseViewSet(ModelViewSet):
+    queryset = MyCourse.objects.filter(status=True)
+    serializer_class = MyCourseAPISerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    
