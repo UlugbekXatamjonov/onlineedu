@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import CategoryAPIViewset, SubCategoryAPIViewset, ExampAPIViewset, QuestionAPIViewset, \
-    AnswerAPIViewset, ResultAPIViewset, TeacherViewset, CourseViewset, FreeResultAPIViewset
+    AnswerAPIViewset, ResultAPIViewset, TeacherViewset, CourseViewset, FreeResultAPIViewset, MyCourseViewSet
 
 router = DefaultRouter()
 """ --------------------------- EXAM APP --------------------------- """
@@ -16,6 +16,7 @@ router.register(r'examp/free-result', FreeResultAPIViewset, 'free-result')
 """ --------------------------- COURSE APP --------------------------- """
 router.register(r'course/course', CourseViewset, 'course')
 router.register(r'course/teacher', TeacherViewset, 'teacher')
+router.register(r'course/mycourse', MyCourseViewSet, 'mycourse')
 
 
 urlpatterns = [ 

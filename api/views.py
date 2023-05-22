@@ -21,31 +21,37 @@ class CategoryAPIViewset(ModelViewSet):
     queryset =  Category.objects.filter(status=True)
     serializer_class = CategoryAPISerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
 
 class SubCategoryAPIViewset(ModelViewSet):
     queryset =  SubCategory.objects.filter(status=True)
     serializer_class = SubCategoryAPISerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
 
 class ExampAPIViewset(ModelViewSet):
     queryset =  Examp.objects.filter(status=True)
     serializer_class = ExampAPISerializer
     permission_classes = [IsAuthenticated]
+    lookup_field = 'slug'
 
 class QuestionAPIViewset(ModelViewSet):
     queryset =  Question.objects.filter(status=True)
     serializer_class = QuestionAPISerializer
     permission_classes = [IsAuthenticated]
+    lookup_field = 'slug'
 
 class AnswerAPIViewset(ModelViewSet):
     queryset =  Answer.objects.filter(status=True)
     serializer_class = AnswerAPISerializer
     permission_classes = [IsAuthenticated]
+    lookup_field = 'slug'
 
 class ResultAPIViewset(ModelViewSet):
     queryset =  Result.objects.all()
     serializer_class = ResultAPISerializer
     permission_classes = [IsAuthenticated]
+    lookup_field = 'slug'
 
     def create(self, request, *args, **kwargs):
         request_data = request.data
@@ -98,6 +104,7 @@ class FreeResultAPIViewset(ModelViewSet):
     queryset =  FreeResult.objects.all()
     serializer_class = FreeResultAPISerializer
     permission_classes = [AllowAny]
+    lookup_field = 'slug'
 
     def create(self, request, *args, **kwargs):
         request_data = request.data
@@ -135,15 +142,18 @@ class TeacherViewset(ModelViewSet):
     queryset  = Teacher.objects.filter(status=True)
     serializer_class = TeacherAPISerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
 
 class CourseViewset(ModelViewSet):
     queryset  = Course.objects.filter(status=True)
     serializer_class = CourseAPISerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
 
 class MyCourseViewSet(ModelViewSet):
     queryset = MyCourse.objects.filter(status=True)
     serializer_class = MyCourseAPISerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
 
     

@@ -63,9 +63,14 @@ class Lessons(models.Model):
     def __str__(self):
         return self.name
 
+def slug_funckion_for_file_model(self):
+        """ Ikkita maydonni sludada birlashtirish """
+        return "{}-file-".format(self.lesson.name)
+
 class File(models.Model):
     lesson = models.ForeignKey(Lessons, on_delete=models.CASCADE, related_name='files')
     file = models.FileField(upload_to='cours_file')
+    slug = AutoSlugField((u'slug'), populate_from=slug_funckion_for_file_model, unique=True)
 
     status = models.BooleanField(default=True)
 
@@ -75,10 +80,15 @@ class File(models.Model):
 
     def __str__(self) -> str:
         return self.lesson.name
-    
-class MyCourse(models.Model):
+
+def slug_funckion_for_mycourse_model(self):
+        """ Ikkita maydonni sludada birlashtirish """
+        return "{}-{}".format(self.student.first_name, self.course.name)
+
+class MyCourse(models.Model):   
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='my_courses')
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    slug = AutoSlugField((u'slug'), populate_from = slug_funckion_for_mycourse_model, unique=True)
     ball = models.PositiveIntegerField(default=0)
     coin = models.PositiveIntegerField(default=0)
 

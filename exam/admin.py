@@ -45,5 +45,5 @@ class ResultAdmin(admin.ModelAdmin):
 
 @admin.register(FreeResult)
 class FreeResultAdmin(admin.ModelAdmin):
-    list_display = ('id', 'subcategory', 'ball', 'created_at')
+    list_display = ('subcategory', 'id', 'ball', 'created_at')
 
