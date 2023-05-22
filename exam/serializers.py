@@ -30,7 +30,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 class ResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = Result
-        fields = ('id', 'ball', 'coin', 'subcategory')
+        fields = ('__all__')
 
 
 

@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from exam.models import Category, SubCategory, Examp, Question, Answer, Result
+from course.models import Course, Teacher
 
         
+""" --------------------------- EXAM APP --------------------------- """
 class ResultAPISerializer(serializers.ModelSerializer):
     class Meta:
         model = Result
@@ -37,3 +39,15 @@ class CategoryAPISerializer(serializers.ModelSerializer):
         fields = ('id', 'name','subcategories')
 
 
+""" --------------------------- COURSE APP --------------------------- """
+
+class TeacherAPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Teacher
+        fields = ('id', 'full_name', 'age', 'degree', 'about')
+
+class CourseAPISerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Course
+        fields = ('id', 'name', 'teacher', 'lesson_count', 'cost')

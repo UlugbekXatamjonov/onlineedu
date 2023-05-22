@@ -4,11 +4,11 @@ from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
 from rest_framework.routers import DefaultRouter
 from .views import UserRegistrationView, UserLoginView, UserProfileView, UserChangePasswordView, \
     SendPasswordResetEmailView, UserPasswordResetView, LogoutAPIView,  UserProfileUpdateView, \
-    MyCourseViewset, ContactViewset
+    ContactViewset, StudentViewset
 
 router = DefaultRouter()
-router.register(r'mycourse', MyCourseViewset, 'mycourse')
 router.register(r'contact', ContactViewset, 'contact')
+router.register(r'student', StudentViewset, 'student')
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name="registration"),

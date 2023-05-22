@@ -5,8 +5,6 @@ from django.utils.html import mark_safe
 
 from autoslug import AutoSlugField
 
-from course.models import Course
-
 # Create your models here.
 
 GENDER = (
@@ -102,23 +100,6 @@ class Student(AbstractUser):
     def is_staff(self):
         "Is the user a member of staff?"
         return self.is_admin
-
-class MyCourse(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='my_courses')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    ball = models.PositiveIntegerField(default=0)
-    coin = models.PositiveIntegerField(default=0)
-
-    status = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now=True)
-    update_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Mening kursim"
-        verbose_name_plural = "Mening kurslarim"
-
-    def __str__(self):
-        return f"{self.course.name}"
 
 class Contact(models.Model):
     name = models.CharField(max_length=50)

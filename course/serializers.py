@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from .models import Course, Lessons, Teacher, File
+from .models import Course, Lessons, Teacher, File, MyCourse
 
 
 class CourseSerializer(ModelSerializer):
@@ -23,6 +23,10 @@ class FileSerializer(ModelSerializer):
         model = File
         fields = ('__all__')
 
+class MyCourseSerializer(ModelSerializer):
+  class Meta:
+     model = MyCourse
+     fields = ('__all__')
 
 
 

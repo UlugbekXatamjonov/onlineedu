@@ -5,7 +5,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
-from .models import Student, MyCourse, Contact
+from .models import Student, Contact
 from .utils import Util
 from exam.serializers import ResultSerializer
 
@@ -166,10 +166,10 @@ class UserPasswordResetSerializer(serializers.Serializer):
 
 """ Serialization for other objects in student models"""
 
-class MyCourseSerializer(serializers.ModelSerializer):
-  class Meta:
-     model = MyCourse
-     fields = ('__all__')
+class StudentSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = Student
+      fields = ('id', 'email', 'first_name', 'phone', 'ball', 'coin')
 
 class ContactSerializer(serializers.ModelSerializer):
    class Meta:

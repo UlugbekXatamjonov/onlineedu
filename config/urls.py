@@ -51,10 +51,11 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-radoc'),
     
-    path('admin-api/student/', include('student.urls')),
-    # path('admin-api/course/', include('course.urls')), # vaqrincha yopiq
-    path('admin-api/examp/', include('exam.urls')),
+    path('api/student/', include('student.urls')),
     path('api/', include('api.urls')),
+    
+    # path('admin-api/course/', include('course.urls')), # vaqrincha yopiq
+    # path('admin-api/examp/', include('exam.urls')),
 ]
 
 if settings.DEBUG:

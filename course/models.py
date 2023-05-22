@@ -1,5 +1,7 @@
 from django.db import models
 from autoslug import AutoSlugField
+
+from student.models import Student
 # Create your models here.
 
 
@@ -74,5 +76,21 @@ class File(models.Model):
     def __str__(self) -> str:
         return self.lesson.name
     
+class MyCourse(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='my_courses')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    ball = models.PositiveIntegerField(default=0)
+    coin = models.PositiveIntegerField(default=0)
+
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now=True)
+    update_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Mening kursim"
+        verbose_name_plural = "Mening kurslarim"
+
+    def __str__(self):
+        return f"{self.course.name}"
 
     

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Teacher, Course, Lessons, File
+from .models import Teacher, Course, Lessons, File, MyCourse
 
 # Register your models here.
 
@@ -29,3 +29,8 @@ class FileAdmin(admin.ModelAdmin):
     list_editable = ['status',]
 
 
+@admin.register(MyCourse)
+class MyCourseAdmin(admin.ModelAdmin):
+    list_display = ('student', 'course', 'id', 'status', 'created_at')
+    list_filter = ('course', 'status', 'created_at')
+    list_editable = ['status',]

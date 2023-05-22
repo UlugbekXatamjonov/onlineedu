@@ -4,7 +4,7 @@ from django.forms.models import model_to_dict
 from pprint import pprint
 
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -13,10 +13,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import viewsets
 
 from .renderers import UserRenderer
-from .models import Student, MyCourse, Contact
+from .models import Student, Contact
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, \
     UserChangePasswordSerializer, SendPasswordResetEmailSerializer, \
-    UserPasswordResetSerializer, LogoutSerializer, MyCourseSerializer, ContactSerializer
+    UserPasswordResetSerializer, LogoutSerializer, ContactSerializer, StudentSerializer
 
 
 """ Viewsets for User Authentication """
@@ -149,16 +149,15 @@ class UserPasswordResetView(APIView):
 
 """  Viewsets for other models  """
 
-class MyCourseViewset(viewsets.ModelViewSet):
-    queryset = MyCourse.objects.all()
-    serializer_class = MyCourseSerializer
-    permission_classes = [AllowAny]
-
 class ContactViewset(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
     permission_classes = [AllowAny]
 
+class StudentViewset(viewsets.ModelViewSet):
+    queryset = Student.objects.filter(status=True)
+    serializer_class = StudentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 

@@ -1,15 +1,21 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import CategoryAPIViewset, SubCategoryAPIViewset, ExampAPIViewset, QuestionAPIViewset, \
-    AnswerAPIViewset, ResultAPIViewset
+    AnswerAPIViewset, ResultAPIViewset, TeacherViewset, CourseViewset
 
 router = DefaultRouter()
-router.register(r'category', CategoryAPIViewset, 'category')
-router.register(r'subcategory', SubCategoryAPIViewset, 'subcategory')
-router.register(r'examp', ExampAPIViewset, 'examp')
-router.register(r'question', QuestionAPIViewset, 'question')
-router.register(r'answer', AnswerAPIViewset, 'answer')
-router.register(r'result', ResultAPIViewset, 'result')
+""" --------------------------- EXAM APP --------------------------- """
+router.register(r'examp/category', CategoryAPIViewset, 'category')
+router.register(r'examp/subcategory', SubCategoryAPIViewset, 'subcategory')
+router.register(r'examp/examp', ExampAPIViewset, 'examp')
+router.register(r'examp/question', QuestionAPIViewset, 'question')
+router.register(r'examp/answer', AnswerAPIViewset, 'answer')
+router.register(r'examp/result', ResultAPIViewset, 'result')
+
+""" --------------------------- COURSE APP --------------------------- """
+router.register(r'course/course', CourseViewset, 'course')
+router.register(r'course/teacher', TeacherViewset, 'teacher')
+
 
 urlpatterns = [ 
     path('', include(router.urls))
