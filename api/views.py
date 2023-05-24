@@ -6,12 +6,15 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from exam.models import Category, SubCategory, Examp, Question, Answer, Result, FreeResult
 from student.models import Student
 from course.models import Course, Teacher, Lessons, File, MyCourse
+from exam.models import Category, SubCategory, Examp, Question, Answer, Result, \
+    FreeResult, FreeCategory, FreeSubCategory
+from course.serializers import MyCourseSerializer
 from .serializers import CategoryAPISerializer, SubCategoryAPISerializer, ExampAPISerializer, \
-    QuestionAPISerializer, AnswerAPISerializer, ResultAPISerializer, CourseAPISerializer, TeacherAPISerializer, \
-    MyCourseAPISerializer, FreeResultAPISerializer
+    QuestionAPISerializer, AnswerAPISerializer, ResultAPISerializer, CourseAPISerializer,\
+    TeacherAPISerializer, MyCourseAPISerializer, FreeResultAPISerializer, FileAPISerializer, \
+    LessonAPISerializer, FreeSubCategoryAPISerializer, FreeCategoryAPISerializer
 
 
 # Create your views here.
@@ -100,6 +103,19 @@ class ResultAPIViewset(ModelViewSet):
         except Exception as e:
             return Response({'error':"Ma'lumotlarni saqlashda xatolik yuzaga keldi !!!"})
 
+
+class FreeCategoryAPIViewset(ModelViewSet):
+    queryset =  FreeCategory.objects.filter(status=True)
+    serializer_class = FreeCategoryAPISerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
+
+class FreeSubCategoryAPIViewset(ModelViewSet):
+    queryset =  FreeSubCategory.objects.filter(status=True)
+    serializer_class = FreeSubCategoryAPISerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
+
 class FreeResultAPIViewset(ModelViewSet):
     queryset =  FreeResult.objects.all()
     serializer_class = FreeResultAPISerializer
@@ -112,7 +128,7 @@ class FreeResultAPIViewset(ModelViewSet):
         """ Obyekt ko'rinishidagi malumotlarni aniqlashtisrib olamiz """
         try:
             if 'subcategory' in request_data:
-                subcategory = SubCategory.objects.get(id=int(request_data['subcategory']))
+                subcategory = FreeSubCategory.objects.get(id=int(request_data['subcategory']))
             else:
                 subcategory = None
         except Exception as e:
@@ -138,6 +154,18 @@ class FreeResultAPIViewset(ModelViewSet):
 
 
 """ --------------------------- COURSE APP --------------------------- """
+class FileViewset(ModelViewSet):
+    queryset  = File.objects.filter(status=True)
+    serializer_class = FileAPISerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'slug'
+
+class LessonViewset(ModelViewSet):
+    queryset  = Lessons.objects.filter(status=True)
+    serializer_class = LessonAPISerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'slug'
+
 class TeacherViewset(ModelViewSet):
     queryset  = Teacher.objects.filter(status=True)
     serializer_class = TeacherAPISerializer
@@ -153,7 +181,39 @@ class CourseViewset(ModelViewSet):
 class MyCourseViewSet(ModelViewSet):
     queryset = MyCourse.objects.filter(status=True)
     serializer_class = MyCourseAPISerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     lookup_field = 'slug'
 
     
+    def create(self, request, *args, **kwargs):
+        request_data = request.data
+
+        try:
+            student = Student.objects.get(id=request.user.id)
+        except Exception as e:
+            return Response({'error':"Bunday o'quvchi topilmadi"})
+
+        try:
+            if 'course' in request_data:
+                course = Course.objects.get(id=request_data['course'])
+            else:
+                return Response({'error':"Bunday kurs topilmadi"})
+        except Exception as e:
+            return Response({'error':"Kursning ma'lumotlarini saqlashda xatolik yuzaga keldi"})
+
+        print(course)
+        print(type(course))
+        for key, value in course.items():
+            print(key, value)
+
+        new_my_course = MyCourse.objects.create(
+            student = student,
+            course = course,
+            next_lesson = None,
+        )
+        new_my_course.save()
+        serializer = MyCourseAPISerializer(new_my_course)
+        return Response(serializer.data)
+
+
+

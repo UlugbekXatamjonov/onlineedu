@@ -31,6 +31,7 @@ class Course(models.Model):
     lesson_count = models.PositiveIntegerField()
     cost = models.PositiveIntegerField(verbose_name='pul uchun',null=True)
     photo = models.ImageField(upload_to='course_photo/%Y/%m/%d/', blank=True, null=True)
+    about = models.TextField(blank=True, null=True)
 
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now=True)
@@ -48,9 +49,9 @@ class Lessons(models.Model):
     name = models.CharField(max_length=61)
     slug = AutoSlugField(populate_from = 'name',unique=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name='lessons')
-    about = models.TextField()
+    about = models.TextField(verbose_name="dars haqida")
     video = models.URLField(blank=True, null=True)
-    body = models.TextField(blank=True, null=True)
+    body = models.TextField(verbose_name="Dars matni", blank=True, null=True)
 
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now=True)
@@ -59,7 +60,7 @@ class Lessons(models.Model):
     class Meta:
         verbose_name = "Dars"
         verbose_name_plural = "Darslar"
-        ordering = ('-created_at',)
+        ordering = ('created_at',)
 
     def __str__(self):
         return self.name
@@ -88,10 +89,11 @@ def slug_funckion_for_mycourse_model(self):
 
 class MyCourse(models.Model):   
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='my_courses')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE,)
     slug = AutoSlugField((u'slug'), populate_from = slug_funckion_for_mycourse_model, unique=True)
     ball = models.PositiveIntegerField(default=0)
     coin = models.PositiveIntegerField(default=0)
+    next_lesson = models.PositiveIntegerField( blank=True, null=True)
 
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now=True)

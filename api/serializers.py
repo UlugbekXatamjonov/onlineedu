@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from exam.models import Category, SubCategory, Examp, Question, Answer, Result, FreeResult
+from exam.models import Category, SubCategory, Examp, Question, Answer, Result, \
+    FreeResult, FreeCategory, FreeSubCategory
 from course.models import Course, Teacher, Lessons, File, MyCourse
 
         
@@ -43,6 +44,18 @@ class CategoryAPISerializer(serializers.ModelSerializer):
         model = Category
         fields = ('id', 'name', 'slug', 'subcategories')
 
+class FreeSubCategoryAPISerializer(serializers.ModelSerializer):
+    questions = QuestionAPISerializer(many=True, read_only=True)
+    class Meta:
+        model = FreeSubCategory
+        fields = ('id', 'category','name', 'slug', 'questions')
+
+class FreeCategoryAPISerializer(serializers.ModelSerializer):
+    free_subcategories = FreeSubCategoryAPISerializer(many=True, read_only=True)
+    class Meta:
+        model = FreeCategory
+        fields = ('id', 'name', 'slug', 'free_subcategories')
+
 
 """ --------------------------- COURSE APP --------------------------- """
 
@@ -51,16 +64,34 @@ class TeacherAPISerializer(serializers.ModelSerializer):
         model = Teacher
         fields = ('id', 'full_name', 'slug', 'age', 'degree', 'about', 'status')
 
+class FileAPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = File
+        fields = ('file',)
+
+class LessonAPISerializer(serializers.ModelSerializer):
+    files = FileAPISerializer(many=True, read_only=True)
+    examp = ExampAPISerializer(many=True, read_only=True)
+    class Meta:
+        model = Lessons
+        fields = ('id', 'name', 'slug', 'course', 'about', 'video', 'body', 'files', 'examp')
+
 class CourseAPISerializer(serializers.ModelSerializer):
+    lessons = LessonAPISerializer(many=True, read_only=True)
+    teacher_name = serializers.CharField(source='teacher.full_name')
     class Meta:
         model = Course
-        fields = ('id', 'name', 'slug', 'teacher', 'lesson_count', 'cost', 'status')
+        fields = ('id', 'name', 'slug', 'teacher', 'teacher_name', 'lesson_count', 'cost', 'lessons', 'about', 'photo')
 
 class MyCourseAPISerializer(serializers.ModelSerializer):
+    course_name = serializers.CharField(source='course.name')
+    course_lesson_count = serializers.IntegerField(source='course.lesson_count')
+    course_slug = serializers.CharField(source='course.slug')
+    
     class Meta:
         model = MyCourse
-        fields = ('id', 'student', 'slug', 'course', 'coin', 'ball')
-
+        fields = ('id', 'student', 'slug', 'course', 'course_name', 'course_slug', 'course_lesson_count',\
+                   'coin', 'ball', 'next_lesson')
 
 
 

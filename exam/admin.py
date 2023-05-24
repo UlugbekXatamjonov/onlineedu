@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Category, SubCategory, Examp, Question, Answer, Result, FreeResult
+from .models import Category, SubCategory, Examp, Question, Answer, Result, \
+    FreeResult, FreeCategory, FreeSubCategory
 
 # Register your models here.
 
@@ -27,8 +28,8 @@ class AnswerTabularAdmin(admin.TabularInline):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('question_text', 'id', 'subcategory', 'examp', 'status', 'created_at')
-    list_filter = ('subcategory','examp','status','created_at')
+    list_display = ('question_text', 'id', 'subcategory', 'free_subcategory', 'examp', 'status', 'created_at')
+    list_filter = ('subcategory','free_subcategory','examp','status','created_at')
     list_editable = ('status',)
     inlines = [AnswerTabularAdmin,]
 
@@ -42,6 +43,19 @@ class AnswerAdmin(admin.ModelAdmin):
 class ResultAdmin(admin.ModelAdmin):
     list_display = ('student', 'subcategory', 'examp', 'ball', 'coin', 'status', 'created_at')
     list_filter = ('subcategory', 'examp', 'status', 'created_at')
+
+
+@admin.register(FreeCategory)
+class FreeCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'id', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    list_editable = ('status',)
+
+@admin.register(FreeSubCategory)
+class FreeSubCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'id', 'category', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    list_editable = ('status',)
 
 @admin.register(FreeResult)
 class FreeResultAdmin(admin.ModelAdmin):

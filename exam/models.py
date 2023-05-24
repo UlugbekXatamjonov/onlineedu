@@ -8,12 +8,66 @@ from student.models import Student
 # Create your models here.
 
 EXAMP_TYPE = (
-    ('free', "Ochiq imtihonlar"),
     ('always',"Doimiy imtihonlar"),
     ('dayly',"Kunlik imtihonlar"),
     ('weekly', "Haftalik imtihonlar"),
     ('monthly', "Oylik imtihonlar"),
 )
+
+""" Free bo'limi - ro'yhatdan o'tmagan userlar uchun ochiq testlar to'plami """
+class FreeCategory(models.Model):
+    name = models.CharField(max_length=50)
+    slug = AutoSlugField(populate_from='name', unique=True)
+
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Ochiq Kategoriya"
+        verbose_name_plural = "Ochiq Kategoriyalar"
+        # ordering = ('-created_at',)
+
+    def __str__(self):
+        return self.name
+
+class FreeSubCategory(models.Model):
+    name = models.CharField(max_length=50)
+    slug = AutoSlugField(populate_from='name', unique=True)
+    category = models.ForeignKey(FreeCategory, on_delete=models.CASCADE, related_name='free_subcategories')
+    about = models.TextField(blank=True, null=True, verbose_name="Batafsil")
+    examp_type = models.CharField(max_length=20, choices=EXAMP_TYPE, default='always', verbose_name="Imtihon turi")
+
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Ochiq Kichik kategoriya"
+        verbose_name_plural = "Ochiq Kichik kategoriyalar"
+        # ordering = ('-created_at',)
+
+    def __str__(self):
+        return self.name
+
+def slug_funckion_for_free_result_model(self):
+    """ Ikkita maydonni sludada birlashtirish """
+    return f"{self.subcategory.name}-free-result"
+
+class FreeResult(models.Model):
+    subcategory = models.ForeignKey(FreeSubCategory, on_delete=models.CASCADE, related_name="free_results", blank=True, null=True)
+    slug = AutoSlugField((u'slug'), populate_from=slug_funckion_for_free_result_model, unique=True)
+    ball = models.PositiveIntegerField(default=0, blank=True, null=True)
+    # answers - o'quvchining belgilagan javovblari yuboriladigan maydon
+    answers = models.JSONField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Ochiq Natija"
+        verbose_name_plural = "Ochiq Natijalar"
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return self.subcategory.name
+""" ---------------------------------------------------------------------- """
 
 
 class Category(models.Model):
@@ -76,6 +130,7 @@ def slug_funckion_for_question_model(self):
 class Question(models.Model):
     """ Imtihon va darsdan keyin beriladigan imtihon uchun savollar """
     subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='questions', blank=True, null=True)
+    free_subcategory = models.ForeignKey(FreeSubCategory, on_delete=models.CASCADE, related_name='questions', blank=True, null=True)
     examp = models.ForeignKey(Examp, on_delete=models.CASCADE, related_name='questions', blank=True, null=True)
     question_text = models.CharField(max_length=123)
     slug = AutoSlugField((u'slug'), populate_from=slug_funckion_for_question_model, unique=True)
@@ -138,25 +193,4 @@ class Result(models.Model):
 
     def __str__(self):
         return self.student.first_name
-
-def slug_funckion_for_free_result_model(self):
-    """ Ikkita maydonni sludada birlashtirish """
-    return f"{self.subcategory.name}-free-result"
-
-class FreeResult(models.Model):
-    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name="free_results", blank=True, null=True)
-    slug = AutoSlugField((u'slug'), populate_from=slug_funckion_for_free_result_model, unique=True)
-    ball = models.PositiveIntegerField(default=0, blank=True, null=True)
-    # answers - o'quvchining belgilagan javovblari yuboriladigan maydon
-    answers = models.JSONField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "Free Natija"
-        verbose_name_plural = "Free Natijalar"
-        ordering = ('-created_at',)
-
-    def __str__(self):
-        return self.subcategory.name
-
 
