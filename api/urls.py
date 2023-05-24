@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import CategoryAPIViewset, SubCategoryAPIViewset, ExampAPIViewset, QuestionAPIViewset, \
     AnswerAPIViewset, ResultAPIViewset, TeacherViewset, CourseViewset, FreeResultAPIViewset, MyCourseViewSet, \
-    FileViewset, LessonViewset,FreeCategoryAPIViewset, FreeSubCategoryAPIViewset
+    FileViewset, LessonViewset,FreeCategoryAPIViewset, FreeSubCategoryAPIViewset, UnitViewset
 
 router = DefaultRouter()
 """ --------------------------- EXAM APP --------------------------- """
@@ -18,10 +18,11 @@ router.register(r'examp/free-subcategory', FreeSubCategoryAPIViewset, 'free-subc
 router.register(r'examp/free-result', FreeResultAPIViewset, 'free-result')
 
 """ --------------------------- COURSE APP --------------------------- """
-router.register(r'course/file', FileViewset, 'file')
-router.register(r'course/lesson', LessonViewset, 'lesson')
 router.register(r'course/teacher', TeacherViewset, 'teacher')
 router.register(r'course/course', CourseViewset, 'course')
+router.register(r'course/unit', UnitViewset, 'unit')
+router.register(r'course/lesson', LessonViewset, 'lesson')
+router.register(r'course/file', FileViewset, 'file')
 router.register(r'course/mycourse', MyCourseViewSet, 'mycourse')
 
 

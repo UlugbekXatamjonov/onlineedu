@@ -45,10 +45,27 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
+class Unit(models.Model):
+    name = models.CharField(max_length=111,unique=True)
+    slug = AutoSlugField(populate_from = 'name', unique=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='units')
+    
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now=True)
+    update_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Bo'lim"
+        verbose_name_plural = "Bo'limlar"
+        ordering = ('created_at',)
+
+    def __str__(self):
+        return self.name
+
 class Lessons(models.Model):
     name = models.CharField(max_length=61)
     slug = AutoSlugField(populate_from = 'name',unique=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name='lessons')
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE,related_name='lessons')
     about = models.TextField(verbose_name="dars haqida")
     video = models.URLField(blank=True, null=True)
     body = models.TextField(verbose_name="Dars matni", blank=True, null=True)

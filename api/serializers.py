@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from exam.models import Category, SubCategory, Examp, Question, Answer, Result, \
     FreeResult, FreeCategory, FreeSubCategory
-from course.models import Course, Teacher, Lessons, File, MyCourse
+from course.models import Course, Teacher, Lessons, File, MyCourse, Unit
 
         
 """ --------------------------- EXAM APP --------------------------- """
@@ -74,14 +74,22 @@ class LessonAPISerializer(serializers.ModelSerializer):
     examp = ExampAPISerializer(many=True, read_only=True)
     class Meta:
         model = Lessons
-        fields = ('id', 'name', 'slug', 'course', 'about', 'video', 'body', 'files', 'examp')
+        fields = ('id', 'name', 'slug', 'unit', 'about', 'video', 'body', 'files', 'examp')
+
+class UnitAPISerializer(serializers.ModelSerializer):
+    lessons = LessonAPISerializer(many=True, read_only=True)
+    class Meta:
+        model = Unit
+        fields = ('id', 'name', 'slug', 'course', 'lessons')
 
 class CourseAPISerializer(serializers.ModelSerializer):
-    lessons = LessonAPISerializer(many=True, read_only=True)
+    units = UnitAPISerializer(many=True, read_only=True)
     teacher_name = serializers.CharField(source='teacher.full_name')
     class Meta:
         model = Course
-        fields = ('id', 'name', 'slug', 'teacher', 'teacher_name', 'lesson_count', 'cost', 'lessons', 'about', 'photo')
+        fields = ('id', 'name', 'slug', 'teacher', 'teacher_name', 'lesson_count', 'cost', 'about', 'photo',\
+                  'units'
+                  )
 
 class MyCourseAPISerializer(serializers.ModelSerializer):
     course_name = serializers.CharField(source='course.name')
